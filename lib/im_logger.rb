@@ -53,9 +53,11 @@ module ImLogger
 
     def self.set_logger(logger)
       @@logger=logger
+      if @@logger.respond_to?(:formatter)
       @@logger.formatter=proc { |severity, datetime, progname, msg|
         "[#{severity}] [#{datetime}] #{msg}\n"
       }
+      end
       nil
     end
 

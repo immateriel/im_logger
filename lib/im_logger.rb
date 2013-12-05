@@ -5,7 +5,9 @@ module ImLogger
   class Log
     def self.parse_binding(bnd)
       tags=[]
-      method=bnd.eval("__method__")
+      if bnd
+
+        method=bnd.eval("__method__")
       method_s=method.to_s
       kaller=bnd.eval("self")
       if kaller.class==Class
@@ -32,8 +34,19 @@ module ImLogger
 
         tags << method_s
       end
+      else
+      end
 
       tags
+    end
+
+    def self.binding_string(bnd)
+      cols=self.parse_binding(bnd)
+      if cols.length > 0
+        cols.join(".")+" "
+      else
+        ""
+      end
     end
 
     @@logger=nil
@@ -64,28 +77,28 @@ module ImLogger
 
     def self.info(binding, text)
       self.message(text).each do |t|
-        self.logger.info(parse_binding(binding).join(".")+ " "+t)
+        self.logger.info(binding_string(binding)+t)
       end
       nil
     end
 
     def self.debug(binding, text)
       self.message(text).each do |t|
-        self.logger.debug(parse_binding(binding).join(".")+ " "+t)
+        self.logger.debug(binding_string(binding)+t)
       end
       nil
     end
 
     def self.error(binding, text)
       self.message(text).each do |t|
-        self.logger.error(parse_binding(binding).join(".")+ " "+t)
+        self.logger.error(binding_string(binding)+t)
       end
       nil
     end
 
     def self.warn(binding, text)
       self.message(text).each do |t|
-        self.logger.warn(parse_binding(binding).join(".")+ " "+t)
+        self.logger.warn(binding_string(binding)+t)
       end
       nil
     end

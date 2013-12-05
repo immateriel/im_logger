@@ -36,18 +36,21 @@ module ImLogger
       tags
     end
 
+    @@logger=nil
+
     def self.set_logger(logger)
-      @logger=logger
-      @logger.formatter=proc { |severity, datetime, progname, msg|
+      @@logger=logger
+      @@logger.formatter=proc { |severity, datetime, progname, msg|
         "[#{severity}] [#{datetime}] #{msg}\n"
       }
+      nil
     end
 
     def self.logger
-      unless @logger
+      unless @@logger
         self.set_logger(Logger.new(STDOUT))
       end
-      @logger
+      @@logger
     end
 
     def self.message(text)

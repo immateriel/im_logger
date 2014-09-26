@@ -55,7 +55,7 @@ module ImLogger
       @@logger=logger
       if @@logger.respond_to?(:formatter)
       @@logger.formatter=proc { |severity, datetime, progname, msg|
-        "[#{severity}] [#{datetime}] #{msg}\n"
+        "[#{severity}] [pid:#{Process.pid}] [#{datetime}] #{msg}\n"
       }
       end
       nil

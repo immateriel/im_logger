@@ -107,7 +107,7 @@ module ImLogger
 
     def self.benchmark(bnd, msg)
       ms=Benchmark.ms { yield }
-      self.info(bnd, "[benchmark] #{msg} : #{ms.prec(1)}ms")
+      self.info(bnd, "[benchmark] #{msg} : #{(ms * 10).to_i/10.0}ms")
     end
 
   end

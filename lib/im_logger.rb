@@ -6,34 +6,33 @@ module ImLogger
     def self.parse_binding(bnd)
       tags=[]
       if bnd
-
         method=bnd.eval("__method__")
-      method_s=method.to_s
-      kaller=bnd.eval("self")
-      if kaller.class==Class
-        # singleton
-        klass=kaller
-        while (klass and !klass.singleton_methods(false).include?(method))
-          klass=klass.superclass
-        end
-        method_s="self.#{method_s}"
-        tags << klass.to_s
-        tags << method_s
-      else
-        klass=kaller.class
-        while (klass and !klass.instance_methods(false).include?(method))
-          klass=klass.superclass
-        end
-        if klass.to_s==""
+        method_s=method.to_s
+        kaller=bnd.eval("self")
+        if kaller.class==Class
+          # singleton
+          klass=kaller
+          while (klass and !klass.singleton_methods(false).include?(method))
+            klass=klass.superclass
+          end
+          method_s="self.#{method_s}"
+          tags << klass.to_s
+          tags << method_s
+        else
           klass=kaller.class
-        end
-        tags << klass.to_s
-        if kaller.respond_to?('id')
-          tags << kaller.id
-        end
+          while (klass and !klass.instance_methods(false).include?(method))
+            klass=klass.superclass
+          end
+          if klass.to_s==""
+            klass=kaller.class
+          end
+          tags << klass.to_s
+          if kaller.respond_to?('id')
+            tags << kaller.id
+          end
 
-        tags << method_s
-      end
+          tags << method_s
+        end
       else
       end
 
@@ -54,9 +53,9 @@ module ImLogger
     def self.set_logger(logger)
       @@logger=logger
       if @@logger.respond_to?(:formatter)
-      @@logger.formatter=proc { |severity, datetime, progname, msg|
-        "[#{severity}] [pid:#{Process.pid}] [#{datetime}] #{msg}\n"
-      }
+        @@logger.formatter=proc { |severity, datetime, progname, msg|
+          "[#{severity}] [pid:#{Process.pid}] [#{datetime}] #{msg}\n"
+        }
       end
       nil
     end
@@ -106,7 +105,7 @@ module ImLogger
     end
 
     def self.benchmark(bnd, msg)
-      ms=Benchmark.ms { yield }
+      ms=1000 * Benchmark.realtime { yield }
       self.info(bnd, "[benchmark] #{msg} : #{(ms * 10).to_i/10.0}ms")
     end
 
